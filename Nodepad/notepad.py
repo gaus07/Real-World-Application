@@ -27,11 +27,11 @@ class NotePad:
         file_menu.add_command(label="Exit", command=self.exit_app)
         
         # Edit menu
-        # edit_menu = tk.Menu(self.menu_bar, tearoff=0)
-        # self.menu_bar.add_cascade(label="Edit", menu=edit_menu)
-        # edit_menu.add_command(label="Find and Replace", command=self.find_and_replace_dialog)
+        edit_menu = tk.Menu(self.menu_bar, tearoff=0)
+        self.menu_bar.add_cascade(label="Edit", menu=edit_menu)
+        edit_menu.add_command(label="Find and Replace", command=self.find_and_replace_dialog)
 
-        # self.file_path = None
+        self.file_path = None
         
     def new_file(self):
         if self.confirm_unsaved_changes():
@@ -102,6 +102,46 @@ class NotePad:
             else:
                 return False
         return True
+    
+    def find_and_replace_dialog(self):
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Find and Replace")
+        dialog.geometry("300x150")
+
+        tk.Label(dialog, text="Find:").grid(row=0, column=0, padx=5, pady=5, sticky="e")
+        find_entry = tk.Entry(dialog, width=25)
+        find_entry.grid(row=0, column=1, padx=5, pady=5)
+
+        tk.Label(dialog, text="Replace:").grid(row=1, column=0, padx=5, pady=5, sticky="e")
+        replace_entry = tk.Entry(dialog, width=25)
+        replace_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        tk.Button(dialog, text="Replace All", command=lambda: self.find_and_replace(find_entry.get(), replace_entry.get(), dialog)).grid(row=2, column=0, columnspan=2, pady=10)
+
+    def find_and_replace(self, target, replacement, dialog):
+        text = self.text_area.get(1.0, tk.END)
+        
+        result = self.find_and_replace_logic(text, target, replacement)
+
+        self.text_area.delete(1.0, tk.END)
+        self.text_area.insert(tk.END, result)
+
+        dialog.destroy()
+        messagebox.showinfo("Find and Replace", f"All occurrences of '{target}' replaced with '{replacement}'.")
+    
+    @staticmethod
+    def find_and_replace_logic(text, target, replacement):
+        res = []
+        i = 0
+        
+        while i < len(text):
+            if text[i:i+len(target)] == target:
+                res.append(replacement)
+                i += len(target)
+            else:
+                res.append(text[i])
+                i += 1
+        return ''.join(res)
     
 
 if __name__ == "__main__":
