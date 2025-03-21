@@ -1,0 +1,15 @@
+# Virtual environment directory
+venv/
+recordings/
+
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# System files
+.DS_Store
+
+# Optional: logs and temporary files
+*.log
+*.tmp
